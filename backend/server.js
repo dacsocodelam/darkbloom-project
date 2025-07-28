@@ -12,9 +12,9 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, "..", "frontend")));
 
 // === CẤU HÌNH GỬI EMAIL ===
-// Đại ka hãy điền MẬT KHẨU ỨNG DỤNG đã tạo vào đây
+// Đại ka hãy điền đúng email và MẬT KHẨU ỨNG DỤNG đã tạo vào đây
 const GMAIL_USER = "vnd22darkhorse@gmail.com";
-const GMAIL_PASSWORD = "darkbloom22"; // <-- DÙNG MẬT KHẨU ỨNG DỤNG, KHÔNG DÙNG MẬT KHẨU THẬT
+const GMAIL_PASSWORD = "MẬT_KHẨU_ỨNG_DỤNG_16_KÝ_TỰ_CỦA_BẠN"; // <-- DÙNG MẬT KHẨU ỨNG DỤNG, KHÔNG DÙNG MẬT KHẨU THẬT
 
 const transporter = nodemailer.createTransport({
   service: "gmail",
