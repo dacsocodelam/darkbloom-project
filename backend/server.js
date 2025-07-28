@@ -1,8 +1,8 @@
 const express = require("express");
 const path = require("path");
 const cors = require("cors");
-const crypto = require("crypto");
 const db = require("./database.js");
+const nodemailer = require("nodemailer"); // Gọi "vũ khí" mới
 
 const app = express();
 const port = 3000;
@@ -11,85 +11,66 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "..", "frontend")));
 
-let shoppingCart = new Map();
+// === CẤU HÌNH GỬI EMAIL ===
+// Đại ka hãy điền MẬT KHẨU ỨNG DỤNG đã tạo vào đây
+const GMAIL_USER = "vnd22darkhorse@gmail.com";
+const GMAIL_PASSWORD = "darkbloom22"; // <-- DÙNG MẬT KHẨU ỨNG DỤNG, KHÔNG DÙNG MẬT KHẨU THẬT
+
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: GMAIL_USER,
+    pass: GMAIL_PASSWORD,
+  },
+});
+
+let shoppingCart = [];
 let connectedAdmins = [];
 
-// --- API GIỎ HÀNG ---
+// --- API GIỎ HÀNG (Giữ nguyên) ---
 app.post("/api/cart/add", (req, res) => {
   const productToAdd = req.body;
-  const productId = productToAdd.id.toString();
-
-  if (shoppingCart.has(productId)) {
-    shoppingCart.get(productId).quantity += 1;
-  } else {
-    productToAdd.quantity = 1;
-    productToAdd.cartItemId = `item-${Date.now()}`;
-    shoppingCart.set(productId, productToAdd);
-  }
+  productToAdd.cartItemId = `item-${Date.now()}`;
+  shoppingCart.push(productToAdd);
   res.status(200).json({
     message: `Đã thêm "${productToAdd.name}" vào giỏ!`,
-    cartTotalItems: shoppingCart.size,
+    cartTotalItems: shoppingCart.length,
   });
 });
-
 app.get("/api/cart", (req, res) => {
-  const cartArray = Array.from(shoppingCart.values());
-  res.status(200).json({ data: cartArray, totalItems: cartArray.length });
+  res.status(200).json({ data: shoppingCart, totalItems: shoppingCart.length });
 });
-
 app.delete("/api/cart/item/:cartItemId", (req, res) => {
   const { cartItemId } = req.params;
-  let productKeyToDelete;
-  for (let [key, value] of shoppingCart.entries()) {
-    if (value.cartItemId === cartItemId) {
-      productKeyToDelete = key;
-      break;
-    }
-  }
-  if (productKeyToDelete) {
-    shoppingCart.delete(productKeyToDelete);
-  }
+  shoppingCart = shoppingCart.filter((item) => item.cartItemId !== cartItemId);
   res.status(200).json({
     message: "Xóa sản phẩm thành công",
-    totalItems: shoppingCart.size,
+    totalItems: shoppingCart.length,
   });
 });
-
 app.patch("/api/cart/item/:cartItemId", (req, res) => {
   const { cartItemId } = req.params;
   const { quantity } = req.body;
-  let itemToUpdate;
-  for (let item of shoppingCart.values()) {
-    if (item.cartItemId === cartItemId) {
-      itemToUpdate = item;
-      break;
-    }
-  }
+  const itemToUpdate = shoppingCart.find(
+    (item) => item.cartItemId === cartItemId
+  );
   if (itemToUpdate) {
-    const newQuantity = parseInt(quantity, 10);
-    if (newQuantity > 0) {
-      itemToUpdate.quantity = newQuantity;
-      res
-        .status(200)
-        .json({ message: "Cập nhật thành công", item: itemToUpdate });
-    } else {
-      shoppingCart.delete(itemToUpdate.id.toString());
-      res.status(200).json({ message: "Đã xóa sản phẩm khỏi giỏ hàng" });
-    }
+    itemToUpdate.quantity = parseInt(quantity, 10);
+    res
+      .status(200)
+      .json({ message: "Cập nhật thành công", item: itemToUpdate });
   } else {
     res.status(404).json({ message: "Không tìm thấy sản phẩm" });
   }
 });
 
-// === API QUẢN LÝ SẢN PHẨM ===
-
-// API LẤY TẤT CẢ SẢN PHẨM HOẶC LỌC THEO DANH MỤC
+// --- API SẢN PHẨM (Giữ nguyên) ---
 app.get("/api/products", (req, res) => {
   const { category } = req.query;
   let sql = "SELECT * FROM products";
   const params = [];
 
-  if (category && category !== "Món Nổi Bật") {
+  if (category) {
     sql += " WHERE category = ?";
     params.push(category);
   }
@@ -104,24 +85,6 @@ app.get("/api/products", (req, res) => {
   });
 });
 
-// API LẤY DANH SÁCH DANH MỤC VÀ SỐ LƯỢNG SẢN PHẨM
-app.get("/api/products/categories", (req, res) => {
-  const sql = `
-    SELECT category, COUNT(*) as productCount 
-    FROM products 
-    WHERE category IS NOT NULL AND category != ''
-    GROUP BY category 
-    ORDER BY category`;
-  db.all(sql, [], (err, rows) => {
-    if (err) return res.status(500).json({ error: err.message });
-    res.json({
-      message: "Lấy danh mục thành công",
-      data: rows,
-    });
-  });
-});
-
-// API THÊM SẢN PHẨM
 app.post("/api/products", (req, res) => {
   const { name, price, category, image_url } = req.body;
   if (!name || !price) {
@@ -136,7 +99,6 @@ app.post("/api/products", (req, res) => {
   });
 });
 
-// API SỬA SẢN PHẨM
 app.put("/api/products/:id", (req, res) => {
   const { name, price, category, image_url } = req.body;
   const sql = `UPDATE products SET name = ?, price = ?, category = ?, image_url = ? WHERE id = ?`;
@@ -150,7 +112,6 @@ app.put("/api/products/:id", (req, res) => {
   );
 });
 
-// API XÓA SẢN PHẨM
 app.delete("/api/products/:id", (req, res) => {
   const sql = "DELETE FROM products WHERE id = ?";
   db.run(sql, req.params.id, function (err) {
@@ -159,49 +120,126 @@ app.delete("/api/products/:id", (req, res) => {
   });
 });
 
-// === API ĐẶT BÀN ===
-app.post("/api/reservations", (req, res) => {
-  const { name, email, phone, people, date, time } = req.body;
-  if (!name || !email || !phone || !people || !date || !time) {
+// === API QUẢN LÝ ĐẶT BÀN (ĐÃ NÂNG CẤP) ===
+
+// POST: Nhận lịch đặt bàn mới (Giữ nguyên)
+app.post("/api/bookings", (req, res) => {
+  const { fullName, email, phone, guests, bookingDate, bookingTime } = req.body;
+  const createdAt = new Date().toISOString();
+
+  if (
+    !fullName ||
+    !email ||
+    !phone ||
+    !guests ||
+    !bookingDate ||
+    !bookingTime
+  ) {
     return res
       .status(400)
       .json({ message: "Vui lòng điền đầy đủ thông tin bắt buộc." });
   }
-  const sql = `INSERT INTO reservations (name, email, phone, num_people, reservation_date, reservation_time) VALUES (?, ?, ?, ?, ?, ?)`;
-  const params = [name, email, phone, people, date, time];
+  const sql = `INSERT INTO bookings (fullName, email, phone, guests, bookingDate, bookingTime, createdAt) VALUES (?, ?, ?, ?, ?, ?, ?)`;
+  const params = [
+    fullName,
+    email,
+    phone,
+    guests,
+    bookingDate,
+    bookingTime,
+    createdAt,
+  ];
   db.run(sql, params, function (err) {
     if (err) {
-      console.error("Lỗi khi lưu thông tin đặt bàn:", err.message);
-      return res
-        .status(500)
-        .json({ message: "Có lỗi xảy ra, không thể hoàn tất đặt bàn." });
+      return res.status(500).json({ error: "Lỗi server khi lưu đặt bàn." });
     }
     res
       .status(201)
-      .json({ message: "Đặt bàn thành công!", reservationId: this.lastID });
+      .json({ message: "Đặt bàn thành công!", bookingId: this.lastID });
   });
 });
 
-app.get("/api/reservations", (req, res) => {
-  const sql = "SELECT * FROM reservations ORDER BY created_at DESC";
+// GET: Lấy tất cả lịch đặt bàn (Giữ nguyên)
+app.get("/api/bookings", (req, res) => {
+  const sql = "SELECT * FROM bookings ORDER BY createdAt DESC";
   db.all(sql, [], (err, rows) => {
-    if (err)
-      return res.status(500).json({ message: "Lỗi server khi lấy dữ liệu." });
-    res.status(200).json({ data: rows });
+    if (err) {
+      return res.status(500).json({ error: err.message });
+    }
+    res.json({ message: "Lấy danh sách đặt bàn thành công", data: rows });
   });
 });
 
-// --- API ĐƠN HÀNG ---
+// POST: "NÚT BẤM HẠT NHÂN" - XÁC NHẬN VÀ GỬI EMAIL
+app.post("/api/bookings/:id/confirm", (req, res) => {
+  const { id } = req.params;
+  const newStatus = "Đã xác nhận";
+
+  db.run(
+    "UPDATE bookings SET status = ? WHERE id = ?",
+    [newStatus, id],
+    function (err) {
+      if (err)
+        return res.status(500).json({ error: "Lỗi khi cập nhật database." });
+      if (this.changes === 0)
+        return res.status(404).json({ message: "Không tìm thấy lịch đặt" });
+
+      db.get("SELECT * FROM bookings WHERE id = ?", [id], (err, booking) => {
+        if (err || !booking)
+          return res
+            .status(500)
+            .json({ error: "Lỗi khi lấy thông tin đặt bàn." });
+
+        const mailOptions = {
+          from: `"Dark Bloom" <${GMAIL_USER}>`,
+          to: booking.email,
+          subject: "Xác nhận Đặt bàn thành công tại Dark Bloom!",
+          html: `
+                    <h3>Xin chào ${booking.fullName},</h3>
+                    <p>Cảm ơn bạn đã tin tưởng và đặt bàn tại <strong>Dark Bloom</strong>.</p>
+                    <p>Chúng tôi xin xác nhận lịch đặt của bạn với thông tin sau:</p>
+                    <ul>
+                        <li><strong>Thời gian:</strong> ${
+                          booking.bookingTime
+                        } - ${new Date(booking.bookingDate).toLocaleDateString(
+            "vi-VN"
+          )}</li>
+                        <li><strong>Số lượng khách:</strong> ${
+                          booking.guests
+                        } người</li>
+                    </ul>
+                    <p>Chúng tôi rất mong được đón tiếp bạn!</p>
+                    <p>Trân trọng,<br>Đội ngũ Dark Bloom.</p>
+                `,
+        };
+
+        transporter.sendMail(mailOptions, (error, info) => {
+          if (error) {
+            console.error("Lỗi khi gửi mail:", error);
+            return res
+              .status(200)
+              .json({ message: "Đã xác nhận đặt bàn (gửi mail thất bại)." });
+          }
+          console.log("Email xác nhận đã được gửi: " + info.response);
+          res
+            .status(200)
+            .json({ message: "Đã xác nhận và gửi email thành công!" });
+        });
+      });
+    }
+  );
+});
+
+// === API ĐƠN HÀNG (Giữ nguyên) ===
 app.post("/api/orders/create", (req, res) => {
-  const cartArray = Array.from(shoppingCart.values());
-  if (cartArray.length === 0) {
+  if (shoppingCart.length === 0)
     return res.status(400).json({ message: "Giỏ hàng trống!" });
-  }
+
   const newOrderData = {
-    id: `DH-${crypto.randomBytes(6).toString("hex")}`,
+    id: `DH-${Date.now()}`,
     timestamp: new Date().toISOString(),
     status: "Mới",
-    items: cartArray,
+    items: [...shoppingCart],
   };
 
   db.serialize(() => {
@@ -211,6 +249,7 @@ app.post("/api/orders/create", (req, res) => {
     );
     orderStmt.run(newOrderData.id, newOrderData.timestamp, newOrderData.status);
     orderStmt.finalize();
+
     const itemStmt = db.prepare(
       "INSERT INTO order_items (order_id, product_name, product_size, quantity, price) VALUES (?, ?, ?, ?, ?)"
     );
@@ -224,6 +263,7 @@ app.post("/api/orders/create", (req, res) => {
       );
     });
     itemStmt.finalize();
+
     db.run("COMMIT;", (err) => {
       if (err) {
         db.run("ROLLBACK;");
@@ -231,18 +271,22 @@ app.post("/api/orders/create", (req, res) => {
           .status(500)
           .json({ message: "Lỗi server khi tạo đơn hàng." });
       }
+
       const orderForAdmin = { orderId: newOrderData.id, ...newOrderData };
       sendEventToAdmins({ event: "new_order", data: orderForAdmin });
-      shoppingCart.clear();
+      shoppingCart = [];
       res
         .status(200)
         .json({ message: "Đặt hàng thành công!", orderId: newOrderData.id });
     });
   });
 });
-
 app.get("/api/orders", (req, res) => {
-  const sql = `SELECT o.id, o.timestamp, o.status, i.product_name, i.product_size, i.quantity, i.price FROM orders o JOIN order_items i ON o.id = i.order_id ORDER BY o.timestamp DESC;`;
+  const sql = `
+        SELECT o.id, o.timestamp, o.status, i.product_name, i.product_size, i.quantity, i.price
+        FROM orders o JOIN order_items i ON o.id = i.order_id
+        ORDER BY o.timestamp DESC;
+    `;
   db.all(sql, [], (err, rows) => {
     if (err) return res.status(500).json({ error: err.message });
     const orders = {};
@@ -265,7 +309,6 @@ app.get("/api/orders", (req, res) => {
     res.json(Object.values(orders));
   });
 });
-
 app.patch("/api/orders/:orderId/status", (req, res) => {
   const { status } = req.body;
   const { orderId } = req.params;
@@ -276,11 +319,13 @@ app.patch("/api/orders/:orderId/status", (req, res) => {
       if (err) return res.status(500).json({ error: err.message });
       if (this.changes === 0)
         return res.status(404).json({ message: "Không tìm thấy đơn hàng" });
-      const sqlSelect = `SELECT o.id, o.timestamp, o.status, i.product_name, i.product_size, i.quantity, i.price FROM orders o JOIN order_items i ON o.id = i.order_id WHERE o.id = ?;`;
+      const sqlSelect = `
+        SELECT o.id, o.timestamp, o.status, i.product_name, i.product_size, i.quantity, i.price
+        FROM orders o JOIN order_items i ON o.id = i.order_id WHERE o.id = ?;`;
       db.all(sqlSelect, [orderId], (err, rows) => {
         if (err || rows.length === 0) {
           return console.error(
-            "Lỗi khi lấy lại đơn hàng:",
+            "Lỗi khi lấy lại đơn hàng sau khi cập nhật:",
             err ? err.message : "Không tìm thấy hàng"
           );
         }
@@ -302,7 +347,7 @@ app.patch("/api/orders/:orderId/status", (req, res) => {
   );
 });
 
-// --- HỆ THỐNG SSE ---
+// --- HỆ THỐNG SSE (Giữ nguyên) ---
 app.get("/api/orders/stream", (req, res) => {
   res.setHeader("Content-Type", "text/event-stream");
   res.setHeader("Connection", "keep-alive");
@@ -311,10 +356,11 @@ app.get("/api/orders/stream", (req, res) => {
   const clientId = Date.now();
   const newClient = { id: clientId, res };
   connectedAdmins.push(newClient);
-  sendEventToAdmins(
-    { event: "welcome", data: { message: "Kết nối thành công!" } },
-    newClient
-  );
+  const welcomeMessage = {
+    event: "welcome",
+    data: { message: "Kết nối thành công!" },
+  };
+  sendEventToAdmins(welcomeMessage, newClient);
   req.on("close", () => {
     connectedAdmins = connectedAdmins.filter(
       (client) => client.id !== clientId

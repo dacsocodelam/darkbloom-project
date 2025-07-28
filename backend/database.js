@@ -1,4 +1,7 @@
+// Gọi thư viện sqlite3 đã cài
 const sqlite3 = require("sqlite3").verbose();
+
+// Mở (hoặc tạo nếu chưa có) một file database tên là 'botea.db'
 const db = new sqlite3.Database(
   "./botea.db",
   sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE,
@@ -13,7 +16,7 @@ const db = new sqlite3.Database(
 
 // Chạy các lệnh SQL để tạo bảng nếu chúng chưa tồn tại
 db.serialize(() => {
-  // Bảng orders (Giữ nguyên)
+  // Bảng để lưu thông tin chung của mỗi đơn hàng
   db.run(
     `CREATE TABLE IF NOT EXISTS orders (
         id TEXT PRIMARY KEY,
@@ -26,7 +29,7 @@ db.serialize(() => {
     }
   );
 
-  // Bảng order_items (Giữ nguyên)
+  // Bảng để lưu các sản phẩm chi tiết trong mỗi đơn hàng
   db.run(
     `CREATE TABLE IF NOT EXISTS order_items (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -44,7 +47,7 @@ db.serialize(() => {
     }
   );
 
-  // Bảng products (Giữ nguyên)
+  // Bảng để lưu trữ toàn bộ sản phẩm của quán
   db.run(
     `CREATE TABLE IF NOT EXISTS products (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -62,25 +65,26 @@ db.serialize(() => {
     }
   );
 
-  // === BẢNG MỚI ĐỂ LƯU THÔNG TIN ĐẶT BÀN ===
+  // Bảng mới để lưu trữ thông tin đặt bàn
   db.run(
-    `CREATE TABLE IF NOT EXISTS reservations (
+    `CREATE TABLE IF NOT EXISTS bookings (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT NOT NULL,
+        fullName TEXT NOT NULL,
         email TEXT NOT NULL,
         phone TEXT NOT NULL,
-        num_people INTEGER NOT NULL,
-        reservation_date TEXT NOT NULL,
-        reservation_time TEXT NOT NULL,
-        created_at TEXT DEFAULT CURRENT_TIMESTAMP
+        guests INTEGER NOT NULL,
+        bookingDate TEXT NOT NULL,
+        bookingTime TEXT NOT NULL,
+        createdAt TEXT NOT NULL
     )`,
     (err) => {
       if (err) {
-        return console.error("Lỗi khi tạo bảng reservations:", err.message);
+        return console.error("Lỗi khi tạo bảng bookings:", err.message);
       }
-      console.log("Bảng 'reservations' đã sẵn sàng.");
+      console.log("Bảng 'bookings' đã sẵn sàng.");
     }
   );
 });
 
+// "Xuất khẩu" biến db để các file khác có thể sử dụng
 module.exports = db;
