@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Thực đơn - Bơ Milk Tea</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100;300;400;700;900&display=swap"
+      rel="stylesheet"
+    />
+    <link href="css/bootstrap.min.css" rel="stylesheet" />
+    <link href="css/bootstrap-icons.css" rel="stylesheet" />
+    <link href="css/templatemo-nomad-force.css" rel="stylesheet" />
+  </head>
+
+  <body>
+    <nav class="navbar navbar-expand-lg bg-dark navbar-dark site-navbar">
+      <div class="container">
+        <a class="navbar-brand" href="index.html">
+          <strong>Botea</strong>
+        </a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav mx-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="index.html">Trang chủ</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="index.html#about">Giới thiệu</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active" href="products.html">Thực đơn</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="index.html#dat-cho-section">Đặt chỗ</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="index.html#careers-section"
+                >Tuyển dụng</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="index.html#contact-section">Liên hệ</a>
+            </li>
+          </ul>
+          <div class="d-flex align-items-center">
+            <button class="btn btn-sm lang-btn me-3">Vie ▼</button>
+            <a class="cart-icon" href="#">
+              <i class="bi-cart" style="font-size: 1.5rem"></i>
+              <span id="cart-item-count" class="cart-badge">0</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <main>
+      <section class="menu-section" id="menu-section">
+        <div class="container-fluid">
+          <div class="row g-0">
+            <div class="col-lg-3 menu-sidebar">
+              <ul class="category-list">
+                <li class="category-item active" data-category="Món Nổi Bật">
+                  <span class="category-name">Món Nổi Bật</span
+                  ><span class="category-count">6</span>
+                </li>
+                <li class="category-item" data-category="Trà Sữa">
+                  <span class="category-name">Trà Sữa</span
+                  ><span class="category-count">8</span>
+                </li>
+                <li class="category-item" data-category="Trà Trái Cây">
+                  <span class="category-name">Trà Trái Cây</span
+                  ><span class="category-count">5</span>
+                </li>
+                <li class="category-item" data-category="Cà Phê">
+                  <span class="category-name">Cà Phê</span
+                  ><span class="category-count">4</span>
+                </li>
+                <li class="category-item" data-category="Đồ Ăn Vặt">
+                  <span class="category-name">Đồ Ăn Vặt</span
+                  ><span class="category-count">10</span>
+                </li>
+              </ul>
+            </div>
+
+            <div class="col-lg-6 menu-main">
+              <h2 class="current-category-title" id="current-category-title">
+                Món Nổi Bật
+              </h2>
+              <div id="product-list-container" class="product-grid">
+                <p class="text-center text-white">
+                  Đang tải danh sách sản phẩm...
+                </p>
+              </div>
+            </div>
+
+            <div class="col-lg-3 menu-cart">
+              <div class="cart-summary">
+                <h4 class="cart-title">Giỏ hàng của tôi</h4>
+                <div class="cart-items-list">
+                  <p class="empty-cart-message">Chưa có sản phẩm nào</p>
+                </div>
+                <div class="cart-total">
+                  <div class="total-row">
+                    <span>Tổng cộng</span>
+                    <span class="total-price">0₫</span>
+                  </div>
+                  <a href="cart.html" class="btn-checkout">Thanh Toán</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <div id="toast-container"></div>
+    <div class="cart-sidebar hidden" id="cart-sidebar">
+      <div class="cart-sidebar-header">
+        <h5 class="mb-0">🛒 Giỏ Hàng</h5>
+        <button type="button" class="btn-close" id="close-cart-btn"></button>
+      </div>
+      <div class="cart-sidebar-body">
+        <div class="text-center p-4">
+          <i class="bi bi-cart-x" style="font-size: 3rem; color: #ccc"></i>
+          <p class="mt-2">Chưa có sản phẩm nào!</p>
+        </div>
+      </div>
+      <div class="cart-sidebar-footer">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <strong>Tổng cộng:</strong><span class="h5 mb-0 text-danger">0₫</span>
+        </div>
+        <a href="cart.html" class="btn btn-primary w-100">💳 Thanh Toán</a>
+      </div>
+    </div>
+    <div class="cart-overlay hidden" id="cart-overlay"></div>
+    <a href="tel:0123456789" class="call-button" title="Gọi cho chúng tôi"
+      ><i class="bi-telephone-fill"></i
+    ></a>
+
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.bundle.min.js"></script>
+    <script src="js/aos.js"></script>
+    <script src="js/cart.js"></script>
+    <script src="js/product-loader.js"></script>
+    <script src="js/custom.js"></script>
+  </body>
+</html>

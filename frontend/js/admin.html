@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Trang Quản Trị - Dark bloom</title>
+    <link href="css/bootstrap.min.css" rel="stylesheet" />
+    <link href="css/bootstrap-icons.css" rel="stylesheet" />
+    <link href="css/templatemo-nomad-force.css" rel="stylesheet" />
+  </head>
+  <body class="admin-body">
+    <nav class="navbar navbar-expand-lg bg-dark navbar-dark site-navbar">
+      <div class="container">
+        <a class="navbar-brand" href="admin.html"
+          ><strong>Dark bloom Admin</strong></a
+        >
+        <div class="ms-auto d-flex align-items-center">
+          <span id="connection-status" class="badge bg-warning me-3"
+            >Đang kết nối...</span
+          >
+          <a href="index.html" class="btn btn-sm btn-outline-light"
+            >Về trang chủ</a
+          >
+        </div>
+      </div>
+    </nav>
+
+    <main class="container my-5">
+      <section id="login-section" class="login-container">
+        <div class="card p-4 shadow-sm">
+          <h3 class="text-center mb-4">Đăng Nhập Quản Trị</h3>
+          <form id="login-form">
+            <div class="mb-3">
+              <label for="password-input" class="form-label">Mật khẩu</label>
+              <input
+                type="password"
+                class="form-control"
+                id="password-input"
+                required
+              />
+            </div>
+            <button type="submit" class="btn btn-primary w-100">
+              Đăng nhập
+            </button>
+          </form>
+        </div>
+      </section>
+
+      <section id="main-content" style="display: none">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <h1>Quản lý Đơn hàng</h1>
+          <div>
+            <a href="admin-reservations.html" class="btn btn-info">
+              <i class="bi-calendar-check-fill me-2"></i>Quản lý Đặt Bàn
+            </a>
+            <a href="admin-products.html" class="btn btn-success ms-2">
+              <i class="bi-box-seam-fill me-2"></i>Quản lý Sản phẩm
+            </a>
+          </div>
+        </div>
+        <div id="orders-container" class="orders-grid">
+          <p class="text-center text-muted">Đang tải đơn hàng...</p>
+        </div>
+      </section>
+    </main>
+
+    <script src="js/admin.js"></script>
+  </body>
+</html>

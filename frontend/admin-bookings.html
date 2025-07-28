@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quản Lý Đặt Bàn</title>
+    <link href="css/bootstrap.min.css" rel="stylesheet" />
+    <link href="css/bootstrap-icons.css" rel="stylesheet" />
+    <style>
+      body {
+        background-color: #f8f9fa;
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <div class="container">
+        <a class="navbar-brand" href="/admin.html">Bảng Điều Khiển</a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#adminNav"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="adminNav">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <a class="nav-link" href="/admin.html">Quản Lý Đơn Hàng</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/admin-products.html"
+                >Quản Lý Sản Phẩm</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active" href="/admin-bookings.html"
+                >Quản Lý Đặt Bàn</a
+              >
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container py-5">
+      <h1 class="h2 mb-4">Danh sách Khách Hàng Đặt Bàn</h1>
+      <div class="table-responsive">
+        <table class="table table-striped table-hover">
+          <thead class="table-dark">
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Tên Khách Hàng</th>
+              <th scope="col">Số điện thoại</th>
+              <th scope="col">Email</th>
+              <th scope="col">Số người</th>
+              <th scope="col">Ngày & Giờ đặt</th>
+              <th scope="col">Thời gian gửi</th>
+            </tr>
+          </thead>
+          <tbody id="bookings-table-body">
+            <tr>
+              <td colspan="7" class="text-center p-4">
+                <div class="spinner-border text-primary" role="status">
+                  <span class="visually-hidden">Loading...</span>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <table class="table table-striped table-hover">
+          <thead>
+            <tr>
+              <th scope="col">Thời gian gửi</th>
+              <th scope="col" class="text-center">Hành động</th>
+            </tr>
+          </thead>
+          <tbody id="bookings-table-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <script src="js/admin-bookings.js"></script>
+  </body>
+</html>

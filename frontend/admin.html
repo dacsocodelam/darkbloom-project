@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Đăng Nhập Quản Trị</title>
+    <link href="css/bootstrap.min.css" rel="stylesheet" />
+    <link href="css/bootstrap-icons.css" rel="stylesheet" />
+    <style>
+      body {
+        background-color: #f8f9fa;
+      }
+      .login-container {
+        max-width: 400px;
+        margin: 10rem auto;
+        padding: 2rem;
+        background-color: #fff;
+        border-radius: 0.5rem;
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+      }
+      .order-card {
+        background-color: #fff;
+        border: 1px solid #dee2e6;
+        border-left: 5px solid #0d6efd;
+        margin-bottom: 1.5rem;
+        padding: 1.5rem;
+        border-radius: 0.25rem;
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+        animation: fadeIn 0.5s ease-in-out;
+      }
+      .order-card pre {
+        background-color: #e9ecef;
+        padding: 1rem;
+        border-radius: 0.25rem;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(-20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      /* Thêm các class này vào trong thẻ <style> của file admin.html */
+      .status-badge {
+        font-size: 0.9em;
+      }
+      .status-moi {
+        background-color: #0d6efd !important;
+      }
+      .status-da-tiep-nhan {
+        background-color: #ffc107 !important;
+        color: #000 !important;
+      }
+      .status-dang-xu-ly {
+        background-color: #0dcaf0 !important;
+      }
+      .status-hoan-thanh {
+        background-color: #198754 !important;
+      }
+      .status-da-huy {
+        background-color: #dc3545 !important;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="login-section" class="login-container">
+      <h3 class="text-center mb-4">Cổng Quản Trị</h3>
+      <form id="login-form">
+        <div class="form-floating mb-3">
+          <input
+            type="password"
+            class="form-control"
+            id="password-input"
+            placeholder="Mật khẩu"
+          />
+          <label for="password-input">Mật khẩu của Đại ca</label>
+        </div>
+        <button type="submit" class="btn btn-primary w-100">Vào Cổng</button>
+      </form>
+    </div>
+
+    <div id="main-content" style="display: none">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+          <a class="navbar-brand" href="/admin.html">Bảng Điều Khiển</a>
+          <button
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#adminNav"
+          >
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="adminNav">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+              <li class="nav-item">
+                <a class="nav-link active" href="/admin.html"
+                  >Quản Lý Đơn Hàng</a
+                >
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/admin-products.html"
+                  >Quản Lý Sản Phẩm</a
+                >
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/admin-bookings.html"
+                  >Quản Lý Đặt Bàn</a
+                >
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+
+      <div class="container py-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <h1 class="h2">Quản Lý Đơn Hàng</h1>
+          <div>
+            <span class="badge bg-success" id="connection-status">
+              <span
+                class="spinner-border spinner-border-sm"
+                role="status"
+                aria-hidden="true"
+              ></span>
+              Đang kết nối...
+            </span>
+          </div>
+        </div>
+        <div id="orders-container"></div>
+      </div>
+    </div>
+
+    <script src="js/admin.js"></script>
+  </body>
+</html>

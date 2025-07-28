@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quản Lý Sản Phẩm</title>
+    <link href="css/bootstrap.min.css" rel="stylesheet" />
+    <link href="css/bootstrap-icons.css" rel="stylesheet" />
+    <style>
+      body {
+        background-color: #f8f9fa;
+      }
+      .table-actions {
+        min-width: 100px;
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <div class="container">
+        <a class="navbar-brand" href="#">Trang Quản Trị</a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#adminNav"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="adminNav">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <a class="nav-link" href="/admin.html">Quản Lý Đơn Hàng</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active" href="/admin-products.html"
+                >Quản Lý Sản Phẩm</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/admin-bookings.html"
+                >Quản Lý Đặt Bàn</a
+              >
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container py-5">
+      <div class="row">
+        <div class="col-lg-4">
+          <div class="card">
+            <div class="card-header">
+              <h5 id="form-title">Thêm Sản Phẩm Mới</h5>
+            </div>
+            <div class="card-body">
+              <form id="product-form">
+                <input type="hidden" id="product-id" />
+                <div class="mb-3">
+                  <label for="product-name" class="form-label"
+                    >Tên sản phẩm</label
+                  >
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="product-name"
+                    required
+                  />
+                </div>
+                <div class="mb-3">
+                  <label for="product-price" class="form-label"
+                    >Giá (VNĐ)</label
+                  >
+                  <input
+                    type="number"
+                    class="form-control"
+                    id="product-price"
+                    required
+                  />
+                </div>
+                <div class="mb-3">
+                  <label for="product-category" class="form-label"
+                    >Loại sản phẩm</label
+                  >
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="product-category"
+                    placeholder="Ví dụ: Cà phê, Trà sữa..."
+                  />
+                </div>
+                <div class="mb-3">
+                  <label for="product-image" class="form-label"
+                    >Đường dẫn hình ảnh</label
+                  >
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="product-image"
+                    placeholder="Ví dụ: images/ten-anh.jpg"
+                  />
+                </div>
+                <div class="d-grid gap-2">
+                  <button type="submit" class="btn btn-primary">
+                    Lưu Sản Phẩm
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-secondary"
+                    id="cancel-edit-btn"
+                    style="display: none"
+                  >
+                    Hủy Sửa
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-8">
+          <h5>Danh sách sản phẩm hiện có</h5>
+          <div class="table-responsive">
+            <table class="table table-striped table-hover">
+              <thead>
+                <tr>
+                  <th scope="col">#</th>
+                  <th scope="col">Tên</th>
+                  <th scope="col">Giá</th>
+                  <th scope="col">Loại</th>
+                  <th scope="col" class="text-center">Hành động</th>
+                </tr>
+              </thead>
+              <tbody id="product-table-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="js/admin-products.js"></script>
+  </body>
+</html>
