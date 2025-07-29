@@ -73,7 +73,7 @@ document.addEventListener("DOMContentLoaded", () => {
    * @param {string} category - Loại sản phẩm cần lọc (mặc định là 'all')
    */
   async function fetchAndDisplayProducts(category = "all") {
-    let url = "/api/products";
+    let url = "${API_BASE_URL}/api/products";
     if (category !== "all") {
       url += `?category=${encodeURIComponent(category)}`;
     }

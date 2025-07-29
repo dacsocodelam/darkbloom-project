@@ -196,7 +196,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     async function loadCategories() {
       try {
-        const response = await fetch("/api/products/categories");
+        const response = await fetch("${API_BASE_URL}/api/products/categories");
         const result = await response.json();
         const categories = result.data;
 

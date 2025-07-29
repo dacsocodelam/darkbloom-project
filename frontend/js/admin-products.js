@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // Hàm tải và hiển thị tất cả sản phẩm
   async function fetchAndDisplayProducts() {
     try {
-      const response = await fetch("/api/products");
+      const response = await fetch("${API_BASE_URL}/api/products");
       const result = await response.json();
       productTableBody.innerHTML = ""; // Xóa sạch bảng cũ
       if (result.data && result.data.length > 0) {
@@ -132,7 +132,7 @@ document.addEventListener("DOMContentLoaded", () => {
         )
       ) {
         try {
-          const response = await fetch(`/api/products/${id}`, {
+          const response = await fetch(`${API_BASE_URL}/api/products/${id}`, {
             method: "DELETE",
           });
           if (response.ok) {

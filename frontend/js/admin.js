@@ -141,7 +141,7 @@ document.addEventListener("DOMContentLoaded", () => {
       eventSource.close();
     };
 
-    fetch("/api/orders")
+    fetch("${API_BASE_URL}/api/orders")
       .then((res) => res.json())
       .then((pastOrders) => {
         if (pastOrders.length === 0) {
@@ -160,7 +160,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const orderId = card.id.replace("order-", "");
         const newStatus = button.dataset.status;
 
-        fetch(`/api/orders/${orderId}/status`, {
+        fetch(`${API_BASE_URL}/api/orders/${orderId}/status`, {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ status: newStatus }),

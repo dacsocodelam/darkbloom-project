@@ -1,13 +1,18 @@
-// File này dùng cho products.html và được gọi bởi các trang khác
-
+/**
+ * Cập nhật số lượng sản phẩm hiển thị trên icon giỏ hàng.
+ * @param {number} [count] - Số lượng cụ thể để hiển thị. Nếu không có, hàm sẽ tự gọi API để lấy.
+ */
 function updateCartCount(count) {
   const cartCountEl = document.getElementById("cart-item-count");
   if (!cartCountEl) return;
+
   if (count !== undefined) {
     cartCountEl.textContent = count;
     return;
   }
-  fetch("/api/cart")
+
+  // Nếu không có số lượng cụ thể, tự gọi API để lấy số mới nhất
+  fetch("${API_BASE_URL}/api/cart") // <-- Đã cập nhật URL
     .then((res) => res.json())
     .then((data) => {
       cartCountEl.textContent = data.totalItems || 0;
@@ -16,22 +21,23 @@ function updateCartCount(count) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
+  // Luôn cập nhật số lượng trên icon khi bất kỳ trang nào tải xong
   updateCartCount();
 
-  // === THAY ĐỔI CỐT LÕI NẰM Ở ĐÂY ===
-  // 1. Tìm "Tổ trưởng" là khu vực chứa toàn bộ sản phẩm
+  // Tìm khu vực chứa toàn bộ sản phẩm (chỉ có trên trang products.html)
   const productContainer = document.getElementById("product-list-container");
 
-  // 2. Chỉ chạy logic này nếu đang ở trang có khu vực đó (tức là trang products.html)
+  // Chỉ chạy logic "Thêm vào giỏ" nếu đang ở trang có khu vực sản phẩm
   if (productContainer) {
-    // 3. Giao nhiệm vụ cho "Tổ trưởng"
+    // Giao nhiệm vụ cho "Tổ trưởng" (productContainer)
     productContainer.addEventListener("click", (event) => {
-      // 4. Kiểm tra xem thứ bị click có phải là nút "Mua ngay" không
+      // "Tổ trưởng" kiểm tra xem thứ vừa được click có phải là nút "Mua ngay" không
       const button = event.target.closest(".add-to-cart-btn");
 
-      // 5. Nếu đúng là nút "Mua ngay" thì mới xử lý
+      // Nếu đúng là nút "Mua ngay" thì mới hành động
       if (button) {
         event.preventDefault();
+
         button.disabled = true;
         button.innerHTML =
           '<span class="spinner-border spinner-border-sm"></span>';
@@ -42,13 +48,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const product = {
           id: card.dataset.productId,
-          name: card.dataset.productNameObj, // <-- Lưu cả object name (JSON string)
+          name: card.dataset.productName,
           price: card.dataset.productPrice,
           size: productSize,
           quantity: card.querySelector(".product-quantity").value,
         };
 
-        fetch("/api/cart/add", {
+        fetch("${API_BASE_URL}/api/cart/add", {
+          // <-- Đã cập nhật URL
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(product),
@@ -60,14 +67,12 @@ document.addEventListener("DOMContentLoaded", () => {
             return response.json();
           })
           .then((data) => {
-            // ---- ĐÃ SỬA ----
-            showToast(data.message); // Hiển thị thông báo toast thay vì alert
+            alert(data.message); // Sử dụng alert gốc như đại ca muốn
             updateCartCount(data.cartTotalItems);
           })
           .catch((error) => {
             console.error("Lỗi khi thêm vào giỏ hàng:", error);
-            // ---- ĐÃ SỬA ----
-            showToast("Có lỗi xảy ra, không thể thêm vào giỏ hàng!"); // Hiển thị thông báo lỗi
+            alert("Có lỗi xảy ra, không thể thêm vào giỏ hàng!");
           })
           .finally(() => {
             button.disabled = false;

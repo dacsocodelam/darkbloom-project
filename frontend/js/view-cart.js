@@ -81,7 +81,7 @@ document.addEventListener("DOMContentLoaded", () => {
   async function renderCart() {
     confirmButton.disabled = true;
     try {
-      const response = await fetch("/api/cart");
+      const response = await fetch("${API_BASE_URL}/api/cart");
       if (!response.ok) throw new Error("Không thể kết nối tới server");
       const cartData = await response.json();
 
@@ -110,7 +110,7 @@ document.addEventListener("DOMContentLoaded", () => {
    */
   async function updateItemQuantityOnServer(cartItemId, quantity) {
     try {
-      await fetch(`/api/cart/item/${cartItemId}`, {
+      await fetch(`${API_BASE_URL}/api/cart/item/${cartItemId}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ quantity }),
@@ -155,9 +155,12 @@ document.addEventListener("DOMContentLoaded", () => {
     } else if (button.classList.contains("delete-item-btn")) {
       if (confirm("Đại ka chắc chắn muốn xóa sản phẩm này?")) {
         row.style.opacity = "0.5";
-        const response = await fetch(`/api/cart/item/${cartItemId}`, {
-          method: "DELETE",
-        });
+        const response = await fetch(
+          `${API_BASE_URL}/api/cart/item/${cartItemId}`,
+          {
+            method: "DELETE",
+          }
+        );
         const data = await response.json();
         row.remove();
         if (typeof updateCartCount === "function")
@@ -195,7 +198,7 @@ document.addEventListener("DOMContentLoaded", () => {
     confirmButton.innerHTML =
       '<span class="spinner-border spinner-border-sm"></span> Đang xử lý...';
 
-    fetch("/api/orders/create", { method: "POST" })
+    fetch("${API_BASE_URL}/api/orders/create", { method: "POST" })
       .then((res) => (res.ok ? res.json() : Promise.reject("Lỗi server")))
       .then((data) => {
         alert(`Đặt hàng thành công!\nMã đơn hàng của bạn là: ${data.orderId}`);

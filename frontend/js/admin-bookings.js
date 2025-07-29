@@ -7,7 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // Hàm để lấy và hiển thị danh sách đặt bàn
   async function fetchAndDisplayBookings() {
     try {
-      const response = await fetch("/api/bookings");
+      const response = await fetch("${API_BASE_URL}/api/bookings");
       if (!response.ok) {
         throw new Error("Lỗi mạng hoặc server không phản hồi");
       }
@@ -76,9 +76,12 @@ document.addEventListener("DOMContentLoaded", () => {
       button.textContent = "Đang gửi...";
 
       try {
-        const response = await fetch(`/api/bookings/${bookingId}/confirm`, {
-          method: "POST",
-        });
+        const response = await fetch(
+          `${API_BASE_URL}/api/bookings/${bookingId}/confirm`,
+          {
+            method: "POST",
+          }
+        );
         const result = await response.json();
         alert(result.message); // Hiển thị thông báo từ server
         fetchAndDisplayBookings(); // Tải lại danh sách để cập nhật trạng thái
